@@ -310,4 +310,5 @@ public class FrmServiceController extends JFrame {
 		txtPrice.setColumns(10);
 		contentPane.setLayout(gl_contentPane);
 	}
+	
 }
