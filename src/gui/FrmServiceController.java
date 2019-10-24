@@ -37,7 +37,6 @@ import database.MySqlDB;
 import database.Sql;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
-import mdlaf.themes.MaterialOceanicTheme;
 
 public class FrmServiceController extends JFrame {
 
@@ -64,13 +63,16 @@ public class FrmServiceController extends JFrame {
 		});
 	}
 
+	/**
+	 * loadData
+	 */
 	public void loadData() {
 		txtCode.setText("");
 		txtName.setText("");
 		txtUnit.setText("");
 		txtPrice.setText("");
 		DefaultTableModel dataModel = new DefaultTableModel();
-		dataModel.setColumnIdentifiers(new String[] { "Code", "Name", "Unit", "Price" });
+		dataModel.setColumnIdentifiers(new String[] { "Mã dịch vụ", "Tên dịch vụ", "Đơn vị", "Đơn giá" });
 		table.setModel(dataModel);
 		try {
 			Connection conn = new MySqlDB().getConnection();
@@ -85,10 +87,20 @@ public class FrmServiceController extends JFrame {
 		}
 	}
 
+	/**
+	 * formWindowOpened
+	 * 
+	 * @param event
+	 */
 	public void formWindowOpened(WindowEvent event) {
 		loadData();
 	}
 
+	/**
+	 * rowMouseClicked
+	 * 
+	 * @param event
+	 */
 	public void rowMouseClicked(MouseEvent event) {
 		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
 		txtCode.setText(dataModel.getValueAt(table.getSelectedRow(), 0).toString());
@@ -97,27 +109,56 @@ public class FrmServiceController extends JFrame {
 		txtPrice.setText(dataModel.getValueAt(table.getSelectedRow(), 3).toString());
 	}
 
+	/**
+	 * btnReloadClick
+	 * 
+	 * @param actionEvent
+	 */
 	public void btnReloadClick(ActionEvent actionEvent) {
 		loadData();
 	}
 
+	/**
+	 * btnAddClick
+	 * 
+	 * @param actionEvent
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public void btnAddClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
 		MySqlDB.executeUpdate(conn, Sql.insertService(),
 				new String[] { txtCode.getText(), txtName.getText(), txtUnit.getText(), txtPrice.getText() });
+		conn.close();
 		loadData();
 	}
 
+	/**
+	 * btnUpdateClick
+	 * 
+	 * @param actionEvent
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public void btnUpdateClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
 		MySqlDB.executeUpdate(conn, Sql.updateService(),
 				new String[] { txtName.getText(), txtUnit.getText(), txtPrice.getText(), txtCode.getText() });
+		conn.close();
 		loadData();
 	}
 
+	/**
+	 * btnRemoveClick
+	 * 
+	 * @param actionEvent
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public void btnRemoveClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
 		MySqlDB.executeUpdate(conn, Sql.deleteService(), new String[] { txtCode.getText() });
+		conn.close();
 		loadData();
 	}
 
@@ -125,6 +166,7 @@ public class FrmServiceController extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmServiceController() {
+		setTitle("Quản lý khách sạn | Cài đặt dịch vụ");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
@@ -140,7 +182,8 @@ public class FrmServiceController extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(1500, 10, 800, 600);
+		setBounds(10, 10, 800, 600);
+		setMinimumSize(getSize());
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -234,7 +277,7 @@ public class FrmServiceController extends JFrame {
 						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
 						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
-		JLabel lblNewLabel = new JLabel("Code");
+		JLabel lblNewLabel = new JLabel("Mã dịch vụ");
 		panel.add(lblNewLabel, "2, 2, right, default");
 
 		txtCode = new JTextField();
@@ -242,7 +285,7 @@ public class FrmServiceController extends JFrame {
 		panel.add(txtCode, "4, 2, fill, default");
 		txtCode.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("Name");
+		JLabel lblNewLabel_1 = new JLabel("Tên dịch vụ");
 		panel.add(lblNewLabel_1, "2, 4, right, default");
 
 		txtName = new JTextField();
@@ -250,7 +293,7 @@ public class FrmServiceController extends JFrame {
 		panel.add(txtName, "4, 4, fill, default");
 		txtName.setColumns(10);
 
-		JLabel lblNewLabel_2 = new JLabel("Unit");
+		JLabel lblNewLabel_2 = new JLabel("Đơn vị");
 		panel.add(lblNewLabel_2, "2, 6, right, default");
 
 		txtUnit = new JTextField();
@@ -258,7 +301,7 @@ public class FrmServiceController extends JFrame {
 		panel.add(txtUnit, "4, 6, fill, default");
 		txtUnit.setColumns(10);
 
-		JLabel lblNewLabel_3 = new JLabel("Price");
+		JLabel lblNewLabel_3 = new JLabel("Đơn giá");
 		panel.add(lblNewLabel_3, "2, 8, right, default");
 
 		txtPrice = new JTextField();
