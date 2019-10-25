@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,19 +33,23 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.toedter.calendar.JDateChooser;
 
 import database.MySqlDB;
 import database.Sql;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
 
-public class FrmServiceController extends JFrame {
+public class FrmCustomerController extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtCode;
-	private JTextField txtName;
-	private JTextField txtUnit;
-	private JTextField txtPrice;
+	private JTextField txtFullName;
+	private JTextField txtIdentityCard;
+	private JTextField txtAddress;
+	private JTextField txtPhone;
+	private JDateChooser dateBirth;
+	private JComboBox cboGender;
 	private JTable table;
 
 	/**
@@ -54,7 +59,7 @@ public class FrmServiceController extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FrmServiceController frame = new FrmServiceController();
+					FrmCustomerController frame = new FrmCustomerController();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -68,18 +73,23 @@ public class FrmServiceController extends JFrame {
 	 */
 	public void loadData() {
 		txtCode.setText("");
-		txtName.setText("");
-		txtUnit.setText("");
-		txtPrice.setText("");
+		txtFullName.setText("");
+		dateBirth.setDate(null);
+		cboGender.setSelectedIndex(0);
+		txtPhone.setText("");
+		txtIdentityCard.setText("");
+		txtAddress.setText("");
 		DefaultTableModel dataModel = new DefaultTableModel();
-		dataModel.setColumnIdentifiers(new String[] { "Mã dịch vụ", "Tên dịch vụ", "Đơn vị", "Đơn giá" });
+		dataModel.setColumnIdentifiers(new String[] { "Mã khách hàng", "Họ tên", "Ngày sinh", "Giới tính",
+				"Số điện thoại", "CMND", "Địa chỉ" });
 		table.setModel(dataModel);
 		try {
 			Connection conn = new MySqlDB().getConnection();
-			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAllService());
+			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAllCustomer());
 			while (rows.next()) {
-				dataModel.addRow(new Object[] { rows.getString("code"), rows.getString("name"), rows.getString("unit"),
-						rows.getLong("price") });
+				dataModel.addRow(new Object[] { rows.getString("code"), rows.getString("fullname"),
+						rows.getString("birth"), rows.getString("gender"), rows.getString("phone"),
+						rows.getString("identity_card"), rows.getString("Address") });
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -104,9 +114,7 @@ public class FrmServiceController extends JFrame {
 	public void rowMouseClicked(MouseEvent event) {
 		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
 		txtCode.setText(dataModel.getValueAt(table.getSelectedRow(), 0).toString());
-		txtName.setText(dataModel.getValueAt(table.getSelectedRow(), 1).toString());
-		txtUnit.setText(dataModel.getValueAt(table.getSelectedRow(), 2).toString());
-		txtPrice.setText(dataModel.getValueAt(table.getSelectedRow(), 3).toString());
+		txtFullName.setText(dataModel.getValueAt(table.getSelectedRow(), 1).toString());
 	}
 
 	/**
@@ -126,11 +134,12 @@ public class FrmServiceController extends JFrame {
 	 * @throws SQLException
 	 */
 	public void btnAddClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.insertService(),
-				new String[] { txtCode.getText(), txtName.getText(), txtUnit.getText(), txtPrice.getText() });
-		conn.close();
-		loadData();
+		System.out.println(cboGender.getSelectedIndex());
+		return;
+//		Connection conn = new MySqlDB().getConnection();
+//		MySqlDB.executeUpdate(conn, Sql.insertCustomer(), new String[] { txtCode.getText(), txtFullName.getText() });
+//		conn.close();
+//		loadData();
 	}
 
 	/**
@@ -142,8 +151,7 @@ public class FrmServiceController extends JFrame {
 	 */
 	public void btnUpdateClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.updateService(),
-				new String[] { txtName.getText(), txtUnit.getText(), txtPrice.getText(), txtCode.getText() });
+		MySqlDB.executeUpdate(conn, Sql.updateCustomer(), new String[] { txtFullName.getText(), txtCode.getText() });
 		conn.close();
 		loadData();
 	}
@@ -157,7 +165,7 @@ public class FrmServiceController extends JFrame {
 	 */
 	public void btnRemoveClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.deleteService(), new String[] { txtCode.getText() });
+		MySqlDB.executeUpdate(conn, Sql.deleteCustomer(), new String[] { txtCode.getText() });
 		conn.close();
 		loadData();
 	}
@@ -165,8 +173,8 @@ public class FrmServiceController extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public FrmServiceController() {
-		setTitle("Quản lý khách sạn | Cài đặt dịch vụ");
+	public FrmCustomerController() {
+		setTitle("Quản lý khách sạn | Cài đặt thông tin khách hàng");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
@@ -182,7 +190,7 @@ public class FrmServiceController extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(10, 10, 800, 600);
+		setBounds(10, 10, 1000, 800);
 		setMinimumSize(getSize());
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -196,15 +204,20 @@ public class FrmServiceController extends JFrame {
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
-				.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
-				.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE));
-		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
-				.createSequentialGroup()
-				.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(ComponentPlacement.RELATED)
-				.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(ComponentPlacement.UNRELATED)
-				.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)));
+				.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
+				.addComponent(panel_1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE));
+		gl_contentPane
+				.setVerticalGroup(
+						gl_contentPane.createParallelGroup(Alignment.TRAILING)
+								.addGroup(Alignment.LEADING,
+										gl_contentPane.createSequentialGroup()
+												.addComponent(panel, GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+												.addPreferredGap(ComponentPlacement.RELATED)
+												.addComponent(panel_1, GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+												.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(panel_2,
+														GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)));
 		panel_2.setLayout(new BorderLayout(0, 0));
 		table = new JTable() {
 			public boolean isCellEditable(int row, int column) {
@@ -224,7 +237,8 @@ public class FrmServiceController extends JFrame {
 		panel_1.setLayout(new FormLayout(
 				new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
 						FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-						FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
+						FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
 		JButton btnAdd = new JButton("Add");
@@ -275,9 +289,12 @@ public class FrmServiceController extends JFrame {
 						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
 						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, }));
 
-		JLabel lblNewLabel = new JLabel("Mã dịch vụ");
+		JLabel lblNewLabel = new JLabel("Mã khách hàng");
 		panel.add(lblNewLabel, "2, 2, right, default");
 
 		txtCode = new JTextField();
@@ -285,30 +302,52 @@ public class FrmServiceController extends JFrame {
 		panel.add(txtCode, "4, 2, fill, default");
 		txtCode.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("Tên dịch vụ");
+		JLabel lblNewLabel_1 = new JLabel("Họ tên");
 		panel.add(lblNewLabel_1, "2, 4, right, default");
 
-		txtName = new JTextField();
-		txtName.setFont(new Font("Arial", Font.PLAIN, 16));
-		panel.add(txtName, "4, 4, fill, default");
-		txtName.setColumns(10);
+		txtFullName = new JTextField();
+		txtFullName.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(txtFullName, "4, 4, fill, default");
+		txtFullName.setColumns(10);
 
-		JLabel lblNewLabel_2 = new JLabel("Đơn vị");
+		JLabel lblNewLabel_2 = new JLabel("Ngày sinh");
 		panel.add(lblNewLabel_2, "2, 6, right, default");
 
-		txtUnit = new JTextField();
-		txtUnit.setFont(new Font("Arial", Font.PLAIN, 16));
-		panel.add(txtUnit, "4, 6, fill, default");
-		txtUnit.setColumns(10);
+		dateBirth = new JDateChooser();
+		dateBirth.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(dateBirth, "4, 6, fill, default");
 
-		JLabel lblNewLabel_3 = new JLabel("Đơn giá");
+		JLabel lblNewLabel_3 = new JLabel("Giới tính");
 		panel.add(lblNewLabel_3, "2, 8, right, default");
 
-		txtPrice = new JTextField();
-		txtPrice.setFont(new Font("Arial", Font.PLAIN, 16));
-		panel.add(txtPrice, "4, 8, fill, default");
-		txtPrice.setColumns(10);
+		cboGender = new JComboBox(new String[] { "Nam", "Nữ" });
+		cboGender.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(cboGender, "4, 8, fill, default");
+
+		JLabel lblNewLabel_4 = new JLabel("Số điện thoại");
+		panel.add(lblNewLabel_4, "2, 10, right, default");
+
+		txtPhone = new JTextField();
+		txtPhone.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(txtPhone, "4, 10, fill, default");
+		txtPhone.setColumns(10);
+
+		JLabel lblNewLabel_5 = new JLabel("CMND");
+		panel.add(lblNewLabel_5, "2, 12, right, default");
+
+		txtIdentityCard = new JTextField();
+		txtIdentityCard.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(txtIdentityCard, "4, 12, fill, default");
+		txtIdentityCard.setColumns(10);
+
+		JLabel lblNewLabel_6 = new JLabel("Địa chỉ");
+		panel.add(lblNewLabel_6, "2, 14, right, default");
+
+		txtAddress = new JTextField();
+		txtAddress.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(txtAddress, "4, 14, fill, default");
+		txtAddress.setColumns(10);
+
 		contentPane.setLayout(gl_contentPane);
 	}
-
 }

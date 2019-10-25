@@ -110,4 +110,40 @@ public class Sql {
 		return sql;
 	}
 
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String selectAllCustomer() {
+		String sql = "select * from customer order by code asc";
+		return sql;
+	}
+
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String insertCustomer() {
+		String sql = "insert into customer values (?, ?, ?, ?, ?, ?, ?)";
+		return sql;
+	}
+
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String updateCustomer() {
+		String sql = "update customer set fullname = ?, birth = ?, gender = ?, phone = ?,  identity_card = ?, address = ? where code = ?";
+		return sql;
+	}
+
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String deleteCustomer() {
+		String sql = "delete from customer where code = ?";
+		return sql;
+	}
+
 }

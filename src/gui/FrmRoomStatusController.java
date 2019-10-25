@@ -285,5 +285,5 @@ public class FrmRoomStatusController extends JFrame {
 		txtName.setColumns(10);
 		contentPane.setLayout(gl_contentPane);
 	}
-	
+
 }
