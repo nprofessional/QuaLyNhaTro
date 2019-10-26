@@ -12,6 +12,8 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -89,7 +91,7 @@ public class FrmCustomerController extends JFrame {
 			while (rows.next()) {
 				dataModel.addRow(new Object[] { rows.getString("code"), rows.getString("fullname"),
 						rows.getString("birth"), rows.getString("gender"), rows.getString("phone"),
-						rows.getString("identity_card"), rows.getString("Address") });
+						rows.getString("identity_card"), rows.getString("address") });
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -110,11 +112,22 @@ public class FrmCustomerController extends JFrame {
 	 * rowMouseClicked
 	 * 
 	 * @param event
+	 * @throws ParseException
 	 */
-	public void rowMouseClicked(MouseEvent event) {
+	public void rowMouseClicked(MouseEvent event) throws ParseException {
 		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
 		txtCode.setText(dataModel.getValueAt(table.getSelectedRow(), 0).toString());
 		txtFullName.setText(dataModel.getValueAt(table.getSelectedRow(), 1).toString());
+		dateBirth.setDate(
+				new SimpleDateFormat("yyyy-MM-dd").parse(dataModel.getValueAt(table.getSelectedRow(), 2).toString()));
+		if (dataModel.getValueAt(table.getSelectedRow(), 3).toString().compareTo("Nam") == 0) {
+			cboGender.setSelectedIndex(0);
+		} else {
+			cboGender.setSelectedIndex(1);
+		}
+		txtPhone.setText(dataModel.getValueAt(table.getSelectedRow(), 4).toString());
+		txtIdentityCard.setText(dataModel.getValueAt(table.getSelectedRow(), 5).toString());
+		txtAddress.setText(dataModel.getValueAt(table.getSelectedRow(), 6).toString());
 	}
 
 	/**
@@ -134,12 +147,14 @@ public class FrmCustomerController extends JFrame {
 	 * @throws SQLException
 	 */
 	public void btnAddClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-		System.out.println(cboGender.getSelectedIndex());
-		return;
-//		Connection conn = new MySqlDB().getConnection();
-//		MySqlDB.executeUpdate(conn, Sql.insertCustomer(), new String[] { txtCode.getText(), txtFullName.getText() });
-//		conn.close();
-//		loadData();
+		String[] params = new String[] { txtCode.getText(), txtFullName.getText(),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateBirth.getDate()),
+				String.valueOf(cboGender.getSelectedIndex()), txtPhone.getText(), txtIdentityCard.getText(),
+				txtAddress.getText() };
+		Connection conn = new MySqlDB().getConnection();
+		MySqlDB.executeUpdate(conn, Sql.insertCustomer(), params);
+		conn.close();
+		loadData();
 	}
 
 	/**
@@ -150,8 +165,12 @@ public class FrmCustomerController extends JFrame {
 	 * @throws SQLException
 	 */
 	public void btnUpdateClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
+		String[] params = new String[] { txtFullName.getText(),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateBirth.getDate()),
+				String.valueOf(cboGender.getSelectedIndex()), txtPhone.getText(), txtIdentityCard.getText(),
+				txtAddress.getText(), txtCode.getText() };
 		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.updateCustomer(), new String[] { txtFullName.getText(), txtCode.getText() });
+		MySqlDB.executeUpdate(conn, Sql.updateCustomer(), params);
 		conn.close();
 		loadData();
 	}
@@ -190,7 +209,7 @@ public class FrmCustomerController extends JFrame {
 			e.printStackTrace();
 		}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(10, 10, 1000, 800);
+		setBounds(0, 0, 800, 600);
 		setMinimumSize(getSize());
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -227,7 +246,11 @@ public class FrmCustomerController extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				rowMouseClicked(arg0);
+				try {
+					rowMouseClicked(arg0);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

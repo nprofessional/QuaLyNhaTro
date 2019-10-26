@@ -115,7 +115,7 @@ public class Sql {
 	 * @return sql
 	 */
 	public static String selectAllCustomer() {
-		String sql = "select * from customer order by code asc";
+		String sql = "select code, fullname, birth, if(gender = 0, 'Nam', 'Nữ') as gender, phone, identity_card, address from customer order by code asc";
 		return sql;
 	}
 
