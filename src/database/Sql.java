@@ -145,5 +145,22 @@ public class Sql {
         String sql = "delete from nnp_customer where code = ?";
         return sql;
     }
-
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String login() {
+        String sql = "select * from nnp_account where user_cd = ? and password = ? and del_flg = 0";
+        return sql;
+    }
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String getListMessage() {
+        String sql = "select * from nnp_message where del_flg = 0";
+        return sql;
+    }
 }
