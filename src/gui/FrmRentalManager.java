@@ -53,17 +53,17 @@ public class FrmRentalManager extends JFrame {
                 .addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
         );
         
-        JPanel panel = new JPanel();
-        tabbedPane.addTab("Thêm thông tin khách hàng", null, panel, null);
+        JPanel pnCustomer = new JPanel();
+        tabbedPane.addTab("Thêm thông tin khách hàng", null, pnCustomer, null);
         
-        JPanel panel_1 = new JPanel();
-        tabbedPane.addTab("Checkin", null, panel_1, null);
+        JPanel pnCheckin = new JPanel();
+        tabbedPane.addTab("Checkin", null, pnCheckin, null);
         
-        JPanel panel_2 = new JPanel();
-        tabbedPane.addTab("Checkout", null, panel_2, null);
+        JPanel pnCheckout = new JPanel();
+        tabbedPane.addTab("Checkout", null, pnCheckout, null);
         
-        JPanel panel_3 = new JPanel();
-        tabbedPane.addTab("Thêm dịch vụ", null, panel_3, null);
+        JPanel pnService = new JPanel();
+        tabbedPane.addTab("Thêm dịch vụ", null, pnService, null);
         contentPane.setLayout(gl_contentPane);
     }
 }
