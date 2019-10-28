@@ -17,9 +17,9 @@ public class initForm {
 		return conn;
 	}
 
-	public static  ResultSet nnp_getListMessage() throws ClassNotFoundException, SQLException{
+	public static ResultSet nnp_getListMessage() throws ClassNotFoundException, SQLException {
 		ResultSet listOfMessage = MySqlDB.executeQuery(nnp_getConnect(), Sql.getListMessage());
-		 return listOfMessage;
+		return listOfMessage;
 	}
 
 	public static String nnp_showMessage(String msg_id) throws ClassNotFoundException, SQLException {

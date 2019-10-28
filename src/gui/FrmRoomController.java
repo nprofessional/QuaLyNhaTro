@@ -12,13 +12,18 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
@@ -32,18 +37,25 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.toedter.calendar.JDateChooser;
 
 import database.MySqlDB;
 import database.Sql;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
 
-public class FrmRoomStatusController extends JFrame {
+public class FrmRoomController extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtCode;
 	private JTextField txtName;
+	private JComboBox cboStatus;
+	private JComboBox cboType;
+	private JTextField txtFloor;
+	private JTextField txtRemark;
 	private JTable table;
+	private HashMap<String, String> statusMap;
+	private HashMap<String, String> typeMap;
 
 	/**
 	 * Launch the application.
@@ -52,7 +64,7 @@ public class FrmRoomStatusController extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FrmRoomStatusController frame = new FrmRoomStatusController();
+					FrmRoomController frame = new FrmRoomController();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -67,18 +79,40 @@ public class FrmRoomStatusController extends JFrame {
 	public void loadData() {
 		txtCode.setText("");
 		txtName.setText("");
+		txtFloor.setText("");
+		txtRemark.setText("");
+		cboStatus.removeAllItems();
+		;
+		cboType.removeAllItems();
 		DefaultTableModel dataModel = new DefaultTableModel();
-		dataModel.setColumnIdentifiers(new String[] { "Mã trạng thái", "Tên trạng thái" });
+		dataModel.setColumnIdentifiers(
+				new String[] { "Mã phòng", "Tên phòng", "Trạng thái", "Loại", "Diện tích", "Ghi chú" });
 		table.setModel(dataModel);
+		statusMap = new HashMap<String, String>();
+		typeMap = new HashMap<String, String>();
 		try {
 			Connection conn = new MySqlDB().getConnection();
-			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAllRoomStatus());
+			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAllRoom());
 			while (rows.next()) {
-				dataModel.addRow(new Object[] { rows.getString("code"), rows.getString("name") });
+				dataModel.addRow(
+						new Object[] { rows.getString("code"), rows.getString("name"), rows.getString("status_name"),
+								rows.getString("type_name"), rows.getString("floor"), rows.getString("remark") });
+				statusMap.put(rows.getString("code"), rows.getString("status"));
+				typeMap.put(rows.getString("code"), rows.getString("type"));
 			}
+			ResultSet status = MySqlDB.executeQuery(conn, Sql.selectAllRoomStatus());
+			while (status.next()) {
+				cboStatus.addItem(status.getString("code") + " - " + status.getString("name"));
+			}
+			ResultSet types = MySqlDB.executeQuery(conn, Sql.selectAllRoomType());
+			while (types.next()) {
+				cboType.addItem(types.getString("code") + " - " + types.getString("name"));
+			}
+			cboStatus.setSelectedIndex(0);
+			cboType.setSelectedIndex(0);
 			conn.close();
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
@@ -100,6 +134,22 @@ public class FrmRoomStatusController extends JFrame {
 		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
 		txtCode.setText(dataModel.getValueAt(table.getSelectedRow(), 0).toString());
 		txtName.setText(dataModel.getValueAt(table.getSelectedRow(), 1).toString());
+		for (int i = 0; i < cboStatus.getItemCount(); i++) {
+			if (statusMap.get(dataModel.getValueAt(table.getSelectedRow(), 0).toString())
+					.compareTo(cboStatus.getItemAt(i).toString().split(" - ")[0].toString()) == 0) {
+				cboStatus.setSelectedIndex(i);
+				break;
+			}
+		}
+		for (int i = 0; i < cboType.getItemCount(); i++) {
+			if (typeMap.get(dataModel.getValueAt(table.getSelectedRow(), 0).toString())
+					.compareTo(cboType.getItemAt(i).toString().split(" - ")[0].toString()) == 0) {
+				cboType.setSelectedIndex(i);
+				break;
+			}
+		}
+		txtFloor.setText(dataModel.getValueAt(table.getSelectedRow(), 4).toString());
+		txtRemark.setText(dataModel.getValueAt(table.getSelectedRow(), 5).toString());
 	}
 
 	/**
@@ -119,8 +169,11 @@ public class FrmRoomStatusController extends JFrame {
 	 * @throws SQLException
 	 */
 	public void btnAddClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
+		String[] params = new String[] { txtCode.getText(), txtName.getText(),
+				cboStatus.getSelectedItem().toString().split(" - ")[0],
+				cboType.getSelectedItem().toString().split(" - ")[0], txtFloor.getText(), txtRemark.getText() };
 		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.insertRoomStatus(), new String[] { txtCode.getText(), txtName.getText() });
+		MySqlDB.executeUpdate(conn, Sql.insertRoom(), params);
 		conn.close();
 		loadData();
 	}
@@ -133,8 +186,12 @@ public class FrmRoomStatusController extends JFrame {
 	 * @throws SQLException
 	 */
 	public void btnUpdateClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
+		String[] params = new String[] { txtName.getText(),
+				cboStatus.getSelectedItem().toString().split(" - ")[0].toString(),
+				cboType.getSelectedItem().toString().split(" - ")[0].toString(), txtFloor.getText(), txtRemark.getText(),
+				txtCode.getText() };
 		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.updateRoomStatus(), new String[] { txtName.getText(), txtCode.getText() });
+		MySqlDB.executeUpdate(conn, Sql.updateRoom(), params);
 		conn.close();
 		loadData();
 	}
@@ -148,7 +205,7 @@ public class FrmRoomStatusController extends JFrame {
 	 */
 	public void btnRemoveClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
-		MySqlDB.executeUpdate(conn, Sql.deleteRoomStatus(), new String[] { txtCode.getText() });
+		MySqlDB.executeUpdate(conn, Sql.deleteRoom(), new String[] { txtCode.getText() });
 		conn.close();
 		loadData();
 	}
@@ -156,8 +213,8 @@ public class FrmRoomStatusController extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public FrmRoomStatusController() {
-		setTitle("Quản lý khách sạn | Cài đặt trạng thái phòng");
+	public FrmRoomController() {
+		setTitle("Quản lý khách sạn | Cài đặt phòng");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
@@ -187,15 +244,15 @@ public class FrmRoomStatusController extends JFrame {
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
-				.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
+				.addComponent(panel_1, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
 				.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE));
 		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPane
 				.createSequentialGroup()
 				.addComponent(panel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(ComponentPlacement.UNRELATED)
-				.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)));
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)));
 		panel_2.setLayout(new BorderLayout(0, 0));
 		table = new JTable() {
 			public boolean isCellEditable(int row, int column) {
@@ -215,7 +272,8 @@ public class FrmRoomStatusController extends JFrame {
 		panel_1.setLayout(new FormLayout(
 				new ColumnSpec[] { FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
 						FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC,
-						FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC, },
+						FormSpecs.DEFAULT_COLSPEC, FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 
 		JButton btnAdd = new JButton("Add");
@@ -266,9 +324,12 @@ public class FrmRoomStatusController extends JFrame {
 						FormSpecs.RELATED_GAP_COLSPEC, ColumnSpec.decode("default:grow"), },
 				new RowSpec[] { FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
 						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, }));
 
-		JLabel lblNewLabel = new JLabel("Mã trạng thái");
+		JLabel lblNewLabel = new JLabel("Mã phòng");
 		panel.add(lblNewLabel, "2, 2, right, default");
 
 		txtCode = new JTextField();
@@ -276,13 +337,44 @@ public class FrmRoomStatusController extends JFrame {
 		panel.add(txtCode, "4, 2, fill, default");
 		txtCode.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("Tên trạng thái");
+		JLabel lblNewLabel_1 = new JLabel("Tên phòng");
 		panel.add(lblNewLabel_1, "2, 4, right, default");
 
 		txtName = new JTextField();
 		txtName.setFont(new Font("Arial", Font.PLAIN, 16));
 		panel.add(txtName, "4, 4, fill, default");
 		txtName.setColumns(10);
+
+		JLabel lblNewLabel_2 = new JLabel("Trạng thái");
+		panel.add(lblNewLabel_2, "2, 6, right, default");
+
+		cboStatus = new JComboBox();
+		cboStatus.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(cboStatus, "4, 6, fill, default");
+
+		JLabel lblNewLabel_3 = new JLabel("Loại");
+		panel.add(lblNewLabel_3, "2, 8, right, default");
+
+		cboType = new JComboBox();
+		cboType.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(cboType, "4, 8, fill, default");
+
+		JLabel lblNewLabel_4 = new JLabel("Diện tích");
+		panel.add(lblNewLabel_4, "2, 10, right, default");
+
+		txtFloor = new JTextField();
+		txtFloor.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(txtFloor, "4, 10, fill, default");
+		txtFloor.setColumns(10);
+
+		JLabel lblNewLabel_5 = new JLabel("Ghi chú");
+		panel.add(lblNewLabel_5, "2, 12, right, default");
+
+		txtRemark = new JTextField();
+		txtRemark.setFont(new Font("Arial", Font.PLAIN, 16));
+		panel.add(txtRemark, "4, 12, fill, default");
+		txtRemark.setColumns(10);
+
 		contentPane.setLayout(gl_contentPane);
 	}
 
