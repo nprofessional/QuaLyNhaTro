@@ -200,4 +200,40 @@ public class Sql {
 		return sql;
 	}
 
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String selectAllRoom() {
+		String sql = "select nnp_room.code, nnp_room.name, nnp_room.status, nnp_room.type, nnp_room.floor, nnp_room.remark, nnp_room_status.name as status_name, nnp_room_type.name as type_name from nnp_room left join nnp_room_status on nnp_room_status.code = nnp_room.status left join nnp_room_type on nnp_room_type.code = nnp_room.type order by code asc";
+		return sql;
+	}
+	
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String insertRoom() {
+		String sql = "insert into nnp_room values (?, ?, ?, ?, ?, ?)";
+		return sql;
+	}
+
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String updateRoom() {
+		String sql = "update nnp_room set name = ?, status = ?, type = ?, floor = ?, remark = ? where code = ?";
+		return sql;
+	}
+
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String deleteRoom() {
+		String sql = "delete from nnp_room where code = ?";
+		return sql;
+	}
+
 }
