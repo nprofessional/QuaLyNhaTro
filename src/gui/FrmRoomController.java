@@ -44,7 +44,7 @@ import database.Sql;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.MaterialLiteTheme;
 
-public class FrmRoom extends JFrame {
+public class FrmRoomController extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField txtCode;
@@ -64,7 +64,7 @@ public class FrmRoom extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FrmRoom frame = new FrmRoom();
+					FrmRoomController frame = new FrmRoomController();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -213,7 +213,7 @@ public class FrmRoom extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public FrmRoom() {
+	public FrmRoomController() {
 		setTitle("Quản lý khách sạn | Cài đặt phòng");
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -337,7 +337,7 @@ public class FrmRoom extends JFrame {
 		panel.add(txtCode, "4, 2, fill, default");
 		txtCode.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("Tên Phòng");
+		JLabel lblNewLabel_1 = new JLabel("Tên phòng");
 		panel.add(lblNewLabel_1, "2, 4, right, default");
 
 		txtName = new JTextField();
