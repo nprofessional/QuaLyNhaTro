@@ -235,5 +235,23 @@ public class Sql {
 		String sql = "delete from nnp_room where code = ?";
 		return sql;
 	}
+	
+	 /***
+     * 
+     * @return sql
+     */
+    public static String selectCustomer() {
+        String sql = "select * from nnp_customer where code = ? ";
+        return sql;
+    }
+    
+    /***
+     * 
+     * @return sql
+     */
+    public static String selectAvaliableRoom() {
+        String sql ="select nnp_room.code, nnp_room.name, nnp_room.status, nnp_room.type, nnp_room.floor, nnp_room.remark, nnp_room_status.name as status_name, nnp_room_type.name as type_name from nnp_room left join nnp_room_status on nnp_room_status.code = nnp_room.status left join nnp_room_type on nnp_room_type.code = nnp_room.type where nnp_room.status = 'TT003' order by code asc";
+        return sql;
+    }
 
 }
