@@ -39,6 +39,8 @@ import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import com.toedter.calendar.JDateChooser;
 
+import helper.Params;
+
 import database.MySqlDB;
 import database.Sql;
 import mdlaf.MaterialLookAndFeel;
@@ -51,6 +53,7 @@ public class FrmRoomAvailiable extends JFrame {
 	private HashMap<String, String> statusMap;
 	private HashMap<String, String> typeMap;
 	public static String[] paramsCode = null;
+
 	/**
 	 * Launch the application.
 	 */
@@ -71,26 +74,26 @@ public class FrmRoomAvailiable extends JFrame {
 	 * loadData
 	 */
 	public void loadData() {
-	    DefaultTableModel dataModel = new DefaultTableModel();
-        dataModel.setColumnIdentifiers(
-                new String[] { "Mã phòng", "Tên phòng", "Trạng thái", "Loại", "Diện tích", "Ghi chú" });
-        table.setModel(dataModel);
-        statusMap = new HashMap<String, String>();
-        typeMap = new HashMap<String, String>();
-        try {
-            Connection conn = new MySqlDB().getConnection();
-            ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAvaliableRoom());
-            while (rows.next()) {
-                dataModel.addRow(
-                        new Object[] { rows.getString("code"), rows.getString("name"), rows.getString("status_name"),
-                                rows.getString("type_name"), rows.getString("floor"), rows.getString("remark") });
-                statusMap.put(rows.getString("code"), rows.getString("status"));
-                typeMap.put(rows.getString("code"), rows.getString("type"));
-            }
-            conn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		DefaultTableModel dataModel = new DefaultTableModel();
+		dataModel.setColumnIdentifiers(
+				new String[] { "Mã phòng", "Tên phòng", "Trạng thái", "Loại", "Diện tích", "Ghi chú" });
+		table.setModel(dataModel);
+		statusMap = new HashMap<String, String>();
+		typeMap = new HashMap<String, String>();
+		try {
+			Connection conn = new MySqlDB().getConnection();
+			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAvaliableRoom());
+			while (rows.next()) {
+				dataModel.addRow(
+						new Object[] { rows.getString("code"), rows.getString("name"), rows.getString("status_name"),
+								rows.getString("type_name"), rows.getString("floor"), rows.getString("remark") });
+				statusMap.put(rows.getString("code"), rows.getString("status"));
+				typeMap.put(rows.getString("code"), rows.getString("type"));
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -109,9 +112,17 @@ public class FrmRoomAvailiable extends JFrame {
 	 */
 	public void rowMouseClicked(MouseEvent event) {
 		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
-		paramsCode  = new String[] { dataModel.getValueAt(table.getSelectedRow(), 0).toString()};
+		paramsCode = new String[] { dataModel.getValueAt(table.getSelectedRow(), 0).toString() };
 	}
 
+	/**
+	 * formWindowClosing
+	 * 
+	 * @param event
+	 */
+	public void formWindowClosing(WindowEvent event) {
+		Params.CUSTOMER_CODE = paramsCode;
+	}
 
 	/**
 	 * Create the frame.
@@ -123,9 +134,11 @@ public class FrmRoomAvailiable extends JFrame {
 			public void windowOpened(WindowEvent arg0) {
 				formWindowOpened(arg0);
 			}
-		    @Override
-		    public void windowClosed(WindowEvent e) {
-		    }
+
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				formWindowClosing(arg0);
+			}
 		});
 		try {
 			UIManager.setLookAndFeel(new MaterialLookAndFeel());
@@ -143,16 +156,11 @@ public class FrmRoomAvailiable extends JFrame {
 
 		JPanel pnListCustomer = new JPanel();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-		    gl_contentPane.createParallelGroup(Alignment.LEADING)
-		        .addComponent(pnListCustomer, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE)
-		);
-		gl_contentPane.setVerticalGroup(
-		    gl_contentPane.createParallelGroup(Alignment.LEADING)
-		        .addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-		            .addContainerGap()
-		            .addComponent(pnListCustomer, GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE))
-		);
+		gl_contentPane.setHorizontalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addComponent(pnListCustomer, GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE));
+		gl_contentPane.setVerticalGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup().addContainerGap()
+						.addComponent(pnListCustomer, GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)));
 		pnListCustomer.setLayout(new BorderLayout(0, 0));
 		table = new JTable() {
 			public boolean isCellEditable(int row, int column) {
