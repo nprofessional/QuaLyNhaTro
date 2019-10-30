@@ -35,7 +35,6 @@ public class FrmLoginController extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtUsername;
 	private JPasswordField txtPassword;
-	private initForm common = new initForm();
 	/**
 	 * Launch the application.
 	 */
@@ -131,14 +130,14 @@ public class FrmLoginController extends JFrame {
 	 */
 	public void btnLoginClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		String[] params  = new String[] { txtUsername.getText(), txtPassword.getText()};
-		ResultSet rows = MySqlDB.executeQuery(common.nnp_getConnect(), Sql.login(), params);
+		ResultSet rows = MySqlDB.executeQuery(initForm.nnp_getConnect(), Sql.login(), params);
 		if (rows.next()) {
-            JOptionPane.showMessageDialog(this, common.nnp_showMessage("S001"));
+            JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("S001"));
 		}
             else {
-                JOptionPane.showMessageDialog(this, common.nnp_showMessage("S002"));                       
+                JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("S002"));                       
 		}
-		common.nnp_getConnect().close();
+		initForm.nnp_getConnect().close();
 	}
 
 }
