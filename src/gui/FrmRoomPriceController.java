@@ -12,6 +12,8 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 import javax.swing.GroupLayout;
@@ -80,6 +82,22 @@ public class FrmRoomPriceController extends JFrame {
 		dataModel.setColumnIdentifiers(
 				new String[] { "Mã phòng", "Giá phòng", "Hiệu lực từ", "Hiệu lực đến", "Phần trăm giảm giá" });
 		table.setModel(dataModel);
+		try {
+			Connection conn = new MySqlDB().getConnection();
+			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAllRoomPrice());
+			while (rows.next()) {
+				dataModel.addRow(new Object[] { rows.getString("room_code"), rows.getString("room_price"),
+						rows.getString("from"), rows.getString("to"), rows.getString("discount_percent") });
+			}
+			ResultSet rooms = MySqlDB.executeQuery(conn, Sql.selectRoomCode());
+			while (rooms.next()) {
+				cboCode.addItem(rooms.getString("code") + " - " + rooms.getString("name"));
+			}
+			conn.close();
+			cboCode.setSelectedIndex(0);
+		} catch (Exception e) {
+
+		}
 	}
 
 	/**
@@ -88,6 +106,97 @@ public class FrmRoomPriceController extends JFrame {
 	 * @param event
 	 */
 	public void formWindowOpened(WindowEvent event) {
+		loadData();
+	}
+
+	/**
+	 * rowMouseClicked
+	 * 
+	 * @param event
+	 * @throws ParseException
+	 */
+	public void rowMouseClicked(MouseEvent event) throws ParseException {
+		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
+		for (int i = 0; i < cboCode.getItemCount(); i++) {
+			if (dataModel.getValueAt(table.getSelectedRow(), 0).toString()
+					.compareTo(cboCode.getItemAt(i).toString().split(" - ")[0].toString()) == 0) {
+				cboCode.setSelectedIndex(i);
+				break;
+			}
+		}
+		txtPrice.setText(dataModel.getValueAt(table.getSelectedRow(), 1).toString());
+		dateFrom.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.parse(dataModel.getValueAt(table.getSelectedRow(), 2).toString()));
+		dateTo.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.parse(dataModel.getValueAt(table.getSelectedRow(), 3).toString()));
+		txtDiscountPercent.setText(dataModel.getValueAt(table.getSelectedRow(), 4).toString());
+	}
+
+	/**
+	 * btnReloadClick
+	 * 
+	 * @param actionEvent
+	 */
+	public void btnReloadClick(ActionEvent actionEvent) {
+		loadData();
+	}
+
+	/**
+	 * btnAddClick
+	 * 
+	 * @param actionEvent
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public void btnAddClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
+		String[] params = new String[] { cboCode.getSelectedItem().toString().split(" - ")[0], txtPrice.getText(),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateFrom.getDate()),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTo.getDate()), txtDiscountPercent.getText() };
+		Connection conn = new MySqlDB().getConnection();
+		MySqlDB.executeUpdate(conn, Sql.insertRoomPrice(), params);
+		conn.close();
+		loadData();
+	}
+
+	/**
+	 * btnUpdateClick
+	 * 
+	 * @param actionEvent
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public void btnUpdateClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException, ParseException {
+		Connection conn = new MySqlDB().getConnection();
+		DefaultTableModel dataModel = (DefaultTableModel) table.getModel();
+		MySqlDB.executeUpdate(conn, Sql.deleteRoomPrice(),
+				new String[] { cboCode.getSelectedItem().toString().split(" - ")[0],
+						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+								.parse(dataModel.getValueAt(table.getSelectedRow(), 2).toString())),
+						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S")
+								.parse(dataModel.getValueAt(table.getSelectedRow(), 3).toString())) });
+		String[] params = new String[] { cboCode.getSelectedItem().toString().split(" - ")[0], txtPrice.getText(),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateFrom.getDate()),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTo.getDate()), txtDiscountPercent.getText(), };
+
+		MySqlDB.executeUpdate(conn, Sql.insertRoomPrice(), params);
+		conn.close();
+		loadData();
+	}
+
+	/**
+	 * btnRemoveClick
+	 * 
+	 * @param actionEvent
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public void btnRemoveClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
+		Connection conn = new MySqlDB().getConnection();
+		MySqlDB.executeUpdate(conn, Sql.deleteRoomPrice(),
+				new String[] { cboCode.getSelectedItem().toString().split(" - ")[0],
+						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateFrom.getDate()),
+						new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateTo.getDate()) });
+		conn.close();
 		loadData();
 	}
 
@@ -143,7 +252,11 @@ public class FrmRoomPriceController extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-//				rowMouseClicked(arg0);
+				try {
+					rowMouseClicked(arg0);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -160,11 +273,11 @@ public class FrmRoomPriceController extends JFrame {
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				try {
-//					btnAddClick(arg0);
-//				} catch (ClassNotFoundException | SQLException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					btnAddClick(arg0);
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		panel_1.add(btnAdd, "2, 2");
@@ -172,11 +285,15 @@ public class FrmRoomPriceController extends JFrame {
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				try {
-//					btnUpdateClick(arg0);
-//				} catch (ClassNotFoundException | SQLException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					try {
+						btnUpdateClick(arg0);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		panel_1.add(btnUpdate, "4, 2");
@@ -184,11 +301,11 @@ public class FrmRoomPriceController extends JFrame {
 		JButton btnRemove = new JButton("Remove");
 		btnRemove.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				try {
-//					btnRemoveClick(arg0);
-//				} catch (ClassNotFoundException | SQLException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					btnRemoveClick(arg0);
+				} catch (ClassNotFoundException | SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		panel_1.add(btnRemove, "6, 2");
@@ -196,7 +313,7 @@ public class FrmRoomPriceController extends JFrame {
 		JButton btnReload = new JButton("Reload");
 		btnReload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				btnReloadClick(arg0);
+				btnReloadClick(arg0);
 			}
 		});
 		panel_1.add(btnReload, "8, 2");

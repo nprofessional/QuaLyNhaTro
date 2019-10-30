@@ -82,7 +82,6 @@ public class FrmRoomController extends JFrame {
 		txtFloor.setText("");
 		txtRemark.setText("");
 		cboStatus.removeAllItems();
-		;
 		cboType.removeAllItems();
 		DefaultTableModel dataModel = new DefaultTableModel();
 		dataModel.setColumnIdentifiers(
