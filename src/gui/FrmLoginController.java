@@ -18,7 +18,7 @@ import javax.swing.border.LineBorder;
 
 import database.MySqlDB;
 import database.Sql;
-
+import helper.Params;
 import nnp_common.initForm;
 
 import java.awt.Color;
@@ -76,10 +76,8 @@ public class FrmLoginController extends JFrame {
 				try {
 					btnLoginClick(e);
 				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
@@ -133,6 +131,7 @@ public class FrmLoginController extends JFrame {
 		ResultSet rows = MySqlDB.executeQuery(initForm.nnp_getConnect(), Sql.login(), params);
 		if (rows.next()) {
             JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("S001"));
+            Params.EMP_CODE = txtUsername.getText();
 		}
             else {
                 JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("S002"));                       

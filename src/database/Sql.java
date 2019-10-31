@@ -159,6 +159,15 @@ public class Sql {
 	 * 
 	 * @return sql
 	 */
+	public static String insertAccount() {
+		String sql = "insert into nnp_account (user_cd, user_nm) values (?, ?)";
+		return sql;
+	}
+	
+	/**
+	 * 
+	 * @return sql
+	 */
 	public static String getListMessage() {
 		String sql = "select * from nnp_message where del_flg = 0";
 		return sql;
@@ -227,7 +236,16 @@ public class Sql {
 		return sql;
 	}
 
-	/***
+	/**
+	 * 
+	 * @return sql
+	 */
+	public static String updateStatusOfRoom() {
+		String sql = "update nnp_room set status = 'TT002' where code = ?";
+		return sql;
+	}
+	
+	/**
 	 * 
 	 * @return sql
 	 */
@@ -274,7 +292,7 @@ public class Sql {
 	}
 
 	
-	 /***
+	 /**
      * 
      * @return sql
      */
@@ -283,7 +301,7 @@ public class Sql {
         return sql;
     }
     
-    /***
+    /**
      * 
      * @return sql
      */
@@ -292,7 +310,7 @@ public class Sql {
         return sql;
     }
     
-    /***
+    /**
      * 
      * @return sql
      */
@@ -301,7 +319,7 @@ public class Sql {
         return sql;
     }
     
-    /***
+    /**
      * 
      * @return sql
      */
@@ -313,6 +331,7 @@ public class Sql {
                 "  , nnp_contract.Room_Code\r\n" + 
                 "  , nnp_room.Name\r\n" + 
                 "  , nnp_contract.From_Date \r\n" + 
+                "  , nnp_contract.contract_no\r\n"+
                 "from\r\n" + 
                 "  nnp_contract \r\n" + 
                 "  left join nnp_customer \r\n" + 
@@ -323,7 +342,7 @@ public class Sql {
         return sql;
     }
     
-    /***
+    /**
      * 
      * @return sql
      */
@@ -335,6 +354,7 @@ public class Sql {
                 "  , nnp_contract.Room_Code\r\n" + 
                 "  , nnp_room.Name\r\n" + 
                 "  , nnp_contract.From_Date \r\n" + 
+                "  , nnp_contract.contract_no\r\n"+
                 "from\r\n" + 
                 "  nnp_contract \r\n" + 
                 "  left join nnp_customer \r\n" + 
@@ -345,6 +365,32 @@ public class Sql {
                 "  nnp_contract.Room_Code = ?";
         return sql;
     }
+     
+    /**
+     * 
+     * @return sql
+     */
+    public static String selectServiceDetail() {
+    	String sql = "select nnp_service_detail.contract_no, nnp_service_detail.service_code, nnp_service_detail.emp_code, nnp_service_detail.quantity, nnp_service.name, nnp_service_detail.created_at from nnp_service_detail left join nnp_service on nnp_service_detail.service_code = nnp_service.code where nnp_service_detail.contract_no = ?";
+    	return sql;
+    }
     
+    /**
+     * 
+     * @return sql
+     */
+    public static String insertServiceDetail() {
+		String sql = "insert into nnp_service_detail values(?, ?, ?, ?, ?)";
+		return sql;
+    }
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String deleteServiceDetail() {
+    	String sql = "delete from nnp_service_detail where contract_no = ?";
+    	return sql;
+    }
     
 }

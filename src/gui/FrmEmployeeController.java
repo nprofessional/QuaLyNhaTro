@@ -155,6 +155,7 @@ public class FrmEmployeeController extends JFrame {
 				txtEmail.getText(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateBirth.getDate()) };
 		Connection conn = new MySqlDB().getConnection();
 		MySqlDB.executeUpdate(conn, Sql.insertEmployee(), params);
+		MySqlDB.executeUpdate(conn, Sql.insertAccount(), new String[] {txtCode.getText(), txtCode.getText()});
 		conn.close();
 		loadData();
 	}
