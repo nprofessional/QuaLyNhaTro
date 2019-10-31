@@ -236,24 +236,6 @@ public class Sql {
 		return sql;
 	}
 
-	/***
-	 * 
-	 * @return sql
-	 */
-	public static String selectCustomer() {
-		String sql = "select * from nnp_customer where code = ? ";
-		return sql;
-	}
-
-	/***
-	 * 
-	 * @return sql
-	 */
-	public static String selectAvaliableRoom() {
-		String sql = "select nnp_room.code, nnp_room.name, nnp_room.status, nnp_room.type, nnp_room.floor, nnp_room.remark, nnp_room_status.name as status_name, nnp_room_type.name as type_name from nnp_room left join nnp_room_status on nnp_room_status.code = nnp_room.status left join nnp_room_type on nnp_room_type.code = nnp_room.type where nnp_room.status = 'TT003' order by code asc";
-		return sql;
-	}
-
 	/**
 	 * 
 	 * @return sql
@@ -290,4 +272,79 @@ public class Sql {
 		String sql = "delete from nnp_room_price where room_code = ? and `from` = ? and `to` = ?";
 		return sql;
 	}
+
+	
+	 /***
+     * 
+     * @return sql
+     */
+    public static String selectCustomer() {
+        String sql = "select * from nnp_customer where code = ? ";
+        return sql;
+    }
+    
+    /***
+     * 
+     * @return sql
+     */
+    public static String selectAvaliableRoom() {
+        String sql ="select nnp_room.code, nnp_room.name, nnp_room.status, nnp_room.type, nnp_room.floor, nnp_room.remark, nnp_room_status.name as status_name, nnp_room_type.name as type_name from nnp_room left join nnp_room_status on nnp_room_status.code = nnp_room.status left join nnp_room_type on nnp_room_type.code = nnp_room.type where nnp_room.status = 'TT003' order by code asc";
+        return sql;
+    }
+    
+    /***
+     * 
+     * @return sql
+     */
+    public static String insertContract() {
+        String sql ="INSERT INTO nnp_contract (Contract_No, Room_Code, Emp_Id, Cus_Id, Cus_Type, From_Date) VALUES (? , ? , ? , ? , ? , ?)";
+        return sql;
+    }
+    
+    /***
+     * 
+     * @return sql
+     */
+    public static String selectAllContract() {
+        String sql ="Select\r\n" + 
+                "  nnp_contract.Cus_Id\r\n" + 
+                "  , nnp_customer.FullName\r\n" + 
+                "  , nnp_contract.Cus_Type\r\n" + 
+                "  , nnp_contract.Room_Code\r\n" + 
+                "  , nnp_room.Name\r\n" + 
+                "  , nnp_contract.From_Date \r\n" + 
+                "from\r\n" + 
+                "  nnp_contract \r\n" + 
+                "  left join nnp_customer \r\n" + 
+                "    on nnp_customer.Code = nnp_contract.Cus_Id \r\n" + 
+                "  left join nnp_room \r\n" + 
+                "    on nnp_room.Code = nnp_contract.Room_Code\r\n" + 
+                "";
+        return sql;
+    }
+    
+    /***
+     * 
+     * @return sql
+     */
+    public static String selectContract() {
+        String sql ="Select\r\n" + 
+                "  nnp_contract.Cus_Id\r\n" + 
+                "  , nnp_customer.FullName\r\n" + 
+                "  , nnp_contract.Cus_Type\r\n" + 
+                "  , nnp_contract.Room_Code\r\n" + 
+                "  , nnp_room.Name\r\n" + 
+                "  , nnp_contract.From_Date \r\n" + 
+                "from\r\n" + 
+                "  nnp_contract \r\n" + 
+                "  left join nnp_customer \r\n" + 
+                "    on nnp_customer.Code = nnp_contract.Cus_Id \r\n" + 
+                "  left join nnp_room \r\n" + 
+                "    on nnp_room.Code = nnp_contract.Room_Code \r\n" + 
+                "where\r\n" + 
+                "  nnp_contract.Room_Code = ?";
+        return sql;
+    }
+    
+    
 }
