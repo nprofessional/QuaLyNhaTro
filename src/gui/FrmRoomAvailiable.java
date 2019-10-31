@@ -128,7 +128,7 @@ public class FrmRoomAvailiable extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmRoomAvailiable() {
-		setTitle("Quản lý khách sạn | Cài đặt phòng");
+		setTitle("Quản lý khách sạn | Danh sách phòng trống");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {

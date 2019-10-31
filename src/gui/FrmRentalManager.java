@@ -64,6 +64,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 import java.awt.Component;
+import java.awt.Dimension;
 
 @SuppressWarnings("unused")
 public class FrmRentalManager extends JFrame {
@@ -240,7 +241,55 @@ public class FrmRentalManager extends JFrame {
 		panel_2.setForeground(Color.RED);
 		panel_2.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
+		JPanel panel_1 = new JPanel();
+
+		JPanel panel_3 = new JPanel();
+		GroupLayout gl_pnRental = new GroupLayout(pnRental);
+		gl_pnRental.setHorizontalGroup(
+			gl_pnRental.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_pnRental.createSequentialGroup()
+					.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
+						.addComponent(panel, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
+						.addGroup(gl_pnRental.createSequentialGroup()
+							.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 358, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
+								.addComponent(panel_3, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+								.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)))
+						.addGroup(gl_pnRental.createSequentialGroup()
+							.addGap(12)
+							.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 745, Short.MAX_VALUE)))
+					.addContainerGap())
+		);
+		gl_pnRental.setVerticalGroup(
+			gl_pnRental.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_pnRental.createSequentialGroup()
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnRental.createSequentialGroup()
+							.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 230, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(panel_3, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
+						.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+
+		JButton btnCheckout = new JButton("Checkout");
+		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
+		gl_panel_1.setHorizontalGroup(gl_panel_1.createParallelGroup(Alignment.LEADING).addGroup(
+				gl_panel_1.createSequentialGroup().addComponent(btnCheckout).addContainerGap(683, Short.MAX_VALUE)));
+		gl_panel_1.setVerticalGroup(
+				gl_panel_1.createParallelGroup(Alignment.LEADING).addGroup(gl_panel_1.createSequentialGroup()
+						.addComponent(btnCheckout).addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		panel_1.setLayout(gl_panel_1);
+
+		JButton btnRemoveRow = new JButton("Remove");
+
 		JButton btnInsertService = new JButton("");
+		btnInsertService.setSize(btnRemoveRow.getSize());
 		btnInsertService.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -252,42 +301,24 @@ public class FrmRentalManager extends JFrame {
 		});
 		btnInsertService.setIcon(new ImageIcon(FrmRentalManager.class.getResource("/imgs/floppy_drive.png")));
 		btnInsertService.setForeground(Color.BLACK);
-
-		JButton btnRemoveRow = new JButton("Remove");
+		GroupLayout gl_panel_3 = new GroupLayout(panel_3);
+		gl_panel_3.setHorizontalGroup(gl_panel_3.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel_3.createSequentialGroup().addGap(2).addComponent(btnRemoveRow)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnInsertService,
+								GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGap(256)));
+		gl_panel_3.setVerticalGroup(gl_panel_3.createParallelGroup(Alignment.LEADING).addGroup(gl_panel_3
+				.createSequentialGroup()
+				.addGroup(gl_panel_3.createParallelGroup(Alignment.LEADING).addComponent(btnRemoveRow).addComponent(
+						btnInsertService, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+						GroupLayout.PREFERRED_SIZE))
+				.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		panel_3.setLayout(gl_panel_3);
 		btnRemoveRow.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				btnRemoveRowClick(arg0);
 			}
 		});
-		GroupLayout gl_pnRental = new GroupLayout(pnRental);
-		gl_pnRental.setHorizontalGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnRental.createSequentialGroup()
-						.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 358, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_pnRental.createSequentialGroup().addComponent(btnRemoveRow)
-										.addPreferredGap(ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
-										.addComponent(btnInsertService, GroupLayout.PREFERRED_SIZE, 127,
-												GroupLayout.PREFERRED_SIZE)
-										.addGap(8))
-								.addGroup(gl_pnRental.createSequentialGroup()
-										.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 411, Short.MAX_VALUE)
-										.addPreferredGap(ComponentPlacement.RELATED)))
-						.addGap(19))
-				.addGroup(gl_pnRental.createSequentialGroup()
-						.addComponent(panel, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE).addContainerGap()));
-		gl_pnRental.setVerticalGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnRental.createSequentialGroup()
-						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
-								.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-								.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE))
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING).addComponent(btnRemoveRow)
-								.addComponent(btnInsertService, GroupLayout.PREFERRED_SIZE, 31,
-										GroupLayout.PREFERRED_SIZE))
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
 		tblService = new JTable() {
 			public boolean isCellEditable(int row, int column) {
