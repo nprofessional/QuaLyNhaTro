@@ -393,4 +393,59 @@ public class Sql {
     	return sql;
     }
     
+    /**
+     * 
+     * @return sql
+     */
+    public static String createInvoice() {
+        String sql = "SELECT\r\n" + 
+                "  nnp_room.Name\r\n" + 
+                "  , nnp_customer.FullName\r\n" + 
+                "  , nnp_contract.From_Date \r\n" + 
+                "FROM\r\n" + 
+                "  nnp_contract \r\n" + 
+                "  LEFT JOIN nnp_room \r\n" + 
+                "    ON nnp_room.Code = nnp_contract.Room_Code \r\n" + 
+                "  LEFT JOIN nnp_customer \r\n" + 
+                "    ON nnp_customer.Code = nnp_contract.Cus_Id \r\n" + 
+                "WHERE\r\n" + 
+                "  nnp_contract.Contract_No = ?";
+        return sql;
+    }
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String selectRoomPrice() {
+        String sql = "SELECT\r\n" + 
+                "  * \r\n" + 
+                "FROM\r\n" + 
+                "  nnp_room_price \r\n" + 
+                "WHERE\r\n" + 
+                "  nnp_room_price.Room_Code = ?";
+        return sql;
+    }
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String getServiceOfContract() {
+        String sql = "SELECT\r\n" + 
+                "  SUM(nnp_service_detail.Quantity) AS Quantity\r\n" + 
+                "  , nnp_service_detail.Service_Code\r\n" + 
+                "  , nnp_service.Name\r\n" + 
+                "  , nnp_service.Price \r\n" + 
+                "FROM\r\n" + 
+                "  nnp_service_detail \r\n" + 
+                "  LEFT JOIN nnp_service \r\n" + 
+                "    ON nnp_service.Code = nnp_service_detail.Service_Code \r\n" + 
+                "WHERE\r\n" + 
+                "  nnp_service_detail.Contract_No = ? \r\n" + 
+                "GROUP BY\r\n" + 
+                "  nnp_service_detail.Service_Code\r\n" + 
+                "";
+        return sql;
+    }
 }
