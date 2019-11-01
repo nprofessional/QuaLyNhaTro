@@ -187,8 +187,8 @@ public class FrmRoomController extends JFrame {
 	public void btnUpdateClick(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
 		String[] params = new String[] { txtName.getText(),
 				cboStatus.getSelectedItem().toString().split(" - ")[0].toString(),
-				cboType.getSelectedItem().toString().split(" - ")[0].toString(), txtFloor.getText(), txtRemark.getText(),
-				txtCode.getText() };
+				cboType.getSelectedItem().toString().split(" - ")[0].toString(), txtFloor.getText(),
+				txtRemark.getText(), txtCode.getText() };
 		Connection conn = new MySqlDB().getConnection();
 		MySqlDB.executeUpdate(conn, Sql.updateRoom(), params);
 		conn.close();
@@ -213,11 +213,19 @@ public class FrmRoomController extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmRoomController() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Quản lý khách sạn | Cài đặt phòng");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				formWindowOpened(arg0);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				FrmDashBoard frmDashBoard = new FrmDashBoard();
+				frmDashBoard.setVisible(true);
 			}
 		});
 		try {
@@ -228,7 +236,6 @@ public class FrmRoomController extends JFrame {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 800, 600);
 		setMinimumSize(getSize());
 		contentPane = new JPanel();

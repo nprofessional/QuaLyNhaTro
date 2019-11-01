@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -80,14 +79,14 @@ public class FrmRoomPriceController extends JFrame {
 		txtDiscountPercent.setText("");
 		DefaultTableModel dataModel = new DefaultTableModel();
 		dataModel.setColumnIdentifiers(
-				new String[] { "Mã phòng", "Giá phòng", "Hiệu lực từ", "Hiệu lực đến", "Phần trăm giảm giá" });
+				new String[] { "Mã phòng", "Giá phòng", "Hiệu lực từ", "Hiệu lực đến", "Phần trăm giảm giá (%)" });
 		table.setModel(dataModel);
 		try {
 			Connection conn = new MySqlDB().getConnection();
 			ResultSet rows = MySqlDB.executeQuery(conn, Sql.selectAllRoomPrice());
 			while (rows.next()) {
 				dataModel.addRow(new Object[] { rows.getString("room_code"), rows.getString("room_price"),
-						rows.getString("from"), rows.getString("to"), rows.getString("discount_percent") });
+						rows.getString("from_date"), rows.getString("to_date"), rows.getString("discount_percent") });
 			}
 			ResultSet rooms = MySqlDB.executeQuery(conn, Sql.selectRoomCode());
 			while (rooms.next()) {
@@ -204,11 +203,19 @@ public class FrmRoomPriceController extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmRoomPriceController() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Quản lý khách sạn | Cài đặt giá phòng");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				formWindowOpened(arg0);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				FrmDashBoard frmDashBoard = new FrmDashBoard();
+				frmDashBoard.setVisible(true);
 			}
 		});
 		try {
@@ -219,7 +226,6 @@ public class FrmRoomPriceController extends JFrame {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 800, 600);
 		setMinimumSize(getSize());
 		contentPane = new JPanel();

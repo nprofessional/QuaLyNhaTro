@@ -241,7 +241,7 @@ public class Sql {
 	 * @return sql
 	 */
 	public static String updateStatusOfRoom() {
-		String sql = "update nnp_room set status = 'TT002' where code = ?";
+		String sql = "update nnp_room set status = ? where code = ?";
 		return sql;
 	}
 	
@@ -287,7 +287,7 @@ public class Sql {
 	 * @return sql
 	 */
 	public static String deleteRoomPrice() {
-		String sql = "delete from nnp_room_price where room_code = ? and `from` = ? and `to` = ?";
+		String sql = "delete from nnp_room_price where room_code = ? and `from_date` = ? and `to_date` = ?";
 		return sql;
 	}
 
@@ -448,4 +448,23 @@ public class Sql {
                 "";
         return sql;
     }
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String insertInvoice() {
+    	String sql = "insert into nnp_invoice(invoice_no, contract_no, amount, totalamount, emp_code) values (?, ?, ?, ?, ?)";
+    	return sql;
+    }
+    
+    /**
+     * 
+     * @return sql
+     */
+    public static String updateCheckOutForContract() {
+    	String sql = "update nnp_contract set To_Date = ? where Contract_No = ?";
+    	return sql;
+    }
+    
 }

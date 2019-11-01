@@ -166,11 +166,19 @@ public class FrmServiceController extends JFrame {
 	 * Create the frame.
 	 */
 	public FrmServiceController() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("Quản lý khách sạn | Cài đặt dịch vụ");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 				formWindowOpened(arg0);
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				FrmDashBoard frmDashBoard = new FrmDashBoard();
+				frmDashBoard.setVisible(true);
 			}
 		});
 		try {
@@ -181,7 +189,6 @@ public class FrmServiceController extends JFrame {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 800, 600);
 		setMinimumSize(getSize());
 		contentPane = new JPanel();

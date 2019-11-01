@@ -1,14 +1,16 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.HeadlessException;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,53 +20,38 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-
-import database.MySqlDB;
-import database.Sql;
-
-import nnp_common.initForm;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTabbedPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-
-import java.awt.Button;
-import javax.swing.ImageIcon;
-
-import gui.FrmRoomAvailiable;
-
-import helper.Params;
-
-import mdlaf.MaterialLookAndFeel;
-import mdlaf.themes.MaterialLiteTheme;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.BevelBorder;
-import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
-import java.awt.CardLayout;
-import com.jgoodies.forms.layout.FormLayout;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
 import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
-import java.awt.Component;
-import java.awt.Dimension;
+
+import database.MySqlDB;
+import database.Sql;
+import helper.Params;
+import nnp_common.initForm;
 
 @SuppressWarnings("unused")
 public class FrmRentalManager extends JFrame {
@@ -107,8 +94,21 @@ public class FrmRentalManager extends JFrame {
 	 * @throws ClassNotFoundException
 	 */
 	public FrmRentalManager() throws ClassNotFoundException, SQLException {
+		try {
+			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+		} catch (InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e2) {
+			e2.printStackTrace();
+		}
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+				FrmDashBoard frmDashBoard = new FrmDashBoard();
+				frmDashBoard.setVisible(true);
+			}
+		});
 		setTitle("Quản lý khách sạn | Quản lý cho thuê");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 800, 600);
 		setMinimumSize(getSize());
 		contentPane = new JPanel();
@@ -128,6 +128,7 @@ public class FrmRentalManager extends JFrame {
 		JLabel lblMSKhc = new JLabel("Mã số khác hàng");
 
 		txtMaKH = new JTextField();
+		txtMaKH.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtMaKH.setColumns(10);
 
 		txtMaKH.addActionListener(new ActionListener() {
@@ -157,6 +158,8 @@ public class FrmRentalManager extends JFrame {
 		JLabel lblTnKh = new JLabel("Tên KH");
 
 		txtTenKh = new JTextField();
+		txtTenKh.setEnabled(false);
+		txtTenKh.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtTenKh.setColumns(10);
 
 		JLabel lblMSPhng = new JLabel("Mã số phòng");
@@ -164,8 +167,10 @@ public class FrmRentalManager extends JFrame {
 		JLabel lblLoiKhcHng = new JLabel("Loại khác hàng");
 		String arrLoaiKH[] = { "Vãn lai", "Hợp đồng" };
 		JComboBox cbxLoaiKH = new JComboBox(arrLoaiKH);
+		cbxLoaiKH.setFont(new Font("Arial", Font.PLAIN, 16));
 
 		txtMaPhong = new JTextField();
+		txtMaPhong.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtMaPhong.setColumns(10);
 
 		JButton btnSearch = new JButton("");
@@ -175,10 +180,10 @@ public class FrmRentalManager extends JFrame {
 				frmRoomAvailiable.setVisible(true);
 				JDialog dialog = new JDialog(frmRoomAvailiable);
 				dialog.setModal(true);
-				if (Params.CUSTOMER_CODE.length > 0) {
-					String[] code = Params.CUSTOMER_CODE;
-					txtMaPhong.setText(code[0]);
-				}
+//				if (Params.CUSTOMER_CODE.length > 0) {
+//					String[] code = Params.CUSTOMER_CODE;
+//					txtMaPhong.setText(code[0]);
+//				}
 			}
 		});
 		btnSearch.setIcon(new ImageIcon(
@@ -226,7 +231,7 @@ public class FrmRentalManager extends JFrame {
 		pnCheckin.add(lblMSPhng, "2, 8, fill, center");
 		pnCheckin.add(txtMaPhong, "4, 8, fill, top");
 		pnCheckin.add(lblLoiKhcHng, "2, 6, fill, center");
-		pnCheckin.add(cbxLoaiKH, "4, 6, fill, top");
+		pnCheckin.add(cbxLoaiKH, "4, 6, 1, 2, fill, top");
 		pnCheckin.add(btnSearch, "6, 8, fill, fill");
 
 		JPanel pnRental = new JPanel();
@@ -245,39 +250,49 @@ public class FrmRentalManager extends JFrame {
 
 		JPanel panel_3 = new JPanel();
 		GroupLayout gl_pnRental = new GroupLayout(pnRental);
-		gl_pnRental.setHorizontalGroup(
-			gl_pnRental.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_pnRental.createSequentialGroup()
-					.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
+		gl_pnRental.setHorizontalGroup(gl_pnRental.createParallelGroup(Alignment.TRAILING).addGroup(gl_pnRental
+				.createSequentialGroup()
+				.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
 						.addComponent(panel, GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
 						.addGroup(gl_pnRental.createSequentialGroup()
-							.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 358, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
-								.addComponent(panel_3, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
-								.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)))
+								.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 358, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
+										.addComponent(panel_3, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
+										.addComponent(panel_2, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)))
+						.addGroup(gl_pnRental.createSequentialGroup().addGap(12).addComponent(panel_1,
+								GroupLayout.DEFAULT_SIZE, 745, Short.MAX_VALUE)))
+				.addContainerGap()));
+		gl_pnRental.setVerticalGroup(gl_pnRental.createParallelGroup(Alignment.LEADING).addGroup(gl_pnRental
+				.createSequentialGroup()
+				.addComponent(panel, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_pnRental.createSequentialGroup()
-							.addGap(12)
-							.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 745, Short.MAX_VALUE)))
-					.addContainerGap())
-		);
-		gl_pnRental.setVerticalGroup(
-			gl_pnRental.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_pnRental.createSequentialGroup()
-					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_pnRental.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_pnRental.createSequentialGroup()
-							.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 230, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(panel_3, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
+								.addComponent(panel_2, GroupLayout.PREFERRED_SIZE, 230, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(panel_3, GroupLayout.PREFERRED_SIZE, 35, GroupLayout.PREFERRED_SIZE))
 						.addComponent(pnService, GroupLayout.PREFERRED_SIZE, 275, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addContainerGap())
-		);
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addContainerGap()));
 
 		JButton btnCheckout = new JButton("Checkout");
+		btnCheckout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					setVisible(false);
+					dispose();
+					FrmInvoice frmInvoice;
+					frmInvoice = new FrmInvoice();
+					frmInvoice.setVisible(true);
+					Params.CONTRACT_CODE = contractNos.get(tblContract.getSelectedRow());
+					Params.ROOM_CODE = txtMaPhong_S.getText();
+				} catch (ClassNotFoundException | SQLException | ParseException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(gl_panel_1.createParallelGroup(Alignment.LEADING).addGroup(
 				gl_panel_1.createSequentialGroup().addComponent(btnCheckout).addContainerGap(683, Short.MAX_VALUE)));
@@ -334,12 +349,14 @@ public class FrmRentalManager extends JFrame {
 		JLabel lblMaPhong_S = new JLabel("Mã số phòng");
 
 		txtMaPhong_S = new JTextField();
+		txtMaPhong_S.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtMaPhong_S.setEditable(false);
 		txtMaPhong_S.setColumns(10);
 
 		JLabel lblSanPham = new JLabel("Sản phẩm");
 
 		cbxDichVu = new JComboBox(getItems());
+		cbxDichVu.setFont(new Font("Arial", Font.PLAIN, 16));
 		cbxDichVu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JComboBox oBox = (JComboBox) arg0.getSource();
@@ -351,6 +368,7 @@ public class FrmRentalManager extends JFrame {
 		JLabel lblSoLuong = new JLabel("Số lượng");
 
 		txtSoLuong_S = new JTextField();
+		txtSoLuong_S.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtSoLuong_S.setColumns(10);
 
 		JButton btnNewButton = new JButton("Thêm dịch vụ");
@@ -369,12 +387,12 @@ public class FrmRentalManager extends JFrame {
 						.addGroup(gl_pnService.createParallelGroup(Alignment.LEADING).addComponent(lblMaPhong_S)
 								.addComponent(lblSanPham).addComponent(lblSoLuong))
 						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_pnService.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_pnService.createParallelGroup(Alignment.TRAILING)
+								.addComponent(cbxDichVu, 0, 259, Short.MAX_VALUE)
 								.addComponent(txtMaPhong_S, GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-								.addGroup(Alignment.TRAILING, gl_pnService.createSequentialGroup()
+								.addGroup(gl_pnService.createSequentialGroup()
 										.addComponent(txtSoLuong_S, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnNewButton))
-								.addComponent(cbxDichVu, 0, 259, Short.MAX_VALUE)))
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(btnNewButton))))
 						.addGroup(gl_pnService.createSequentialGroup().addGap(104).addComponent(list,
 								GroupLayout.PREFERRED_SIZE, 1, GroupLayout.PREFERRED_SIZE)))
 				.addContainerGap()));
@@ -384,7 +402,7 @@ public class FrmRentalManager extends JFrame {
 						txtMaPhong_S, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18)
 				.addGroup(gl_pnService.createParallelGroup(Alignment.BASELINE).addComponent(lblSanPham)
-						.addComponent(cbxDichVu, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE))
+						.addComponent(cbxDichVu, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 				.addGap(18)
 				.addGroup(gl_pnService.createParallelGroup(Alignment.BASELINE).addComponent(lblSoLuong)
 						.addComponent(txtSoLuong_S, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
@@ -397,6 +415,7 @@ public class FrmRentalManager extends JFrame {
 		JLabel lblMaPhong_LC = new JLabel("Mã số phòng");
 
 		txtMaKH_LC = new JTextField();
+		txtMaKH_LC.setFont(new Font("Arial", Font.PLAIN, 16));
 		txtMaKH_LC.setColumns(10);
 
 		JButton bntSearchContract_LC = new JButton("");
@@ -470,7 +489,7 @@ public class FrmRentalManager extends JFrame {
 			throws ClassNotFoundException, SQLException {
 		Connection conn = new MySqlDB().getConnection();
 		MySqlDB.executeUpdate(conn, Sql.insertContract(), params);
-		MySqlDB.executeQuery(conn, Sql.updateStatusOfRoom(), new String[] { params[1] });
+		MySqlDB.executeUpdate(conn, Sql.updateStatusOfRoom(), new String[] { "TT002", params[1] });
 		JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("M002"));
 		conn.close();
 		txtMaKH.setText("");
@@ -548,10 +567,9 @@ public class FrmRentalManager extends JFrame {
 		contractNos = new ArrayList<String>();
 		try {
 			ResultSet rows = MySqlDB.executeQuery(initForm.nnp_getConnect(), Sql.selectAllContract());
-			if (!rows.next()) {
+			if (rows.wasNull()) {
 				JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("M004"));
 			}
-			;
 			while (rows.next()) {
 				dataContract.addRow(new Object[] { rows.getString("Cus_Id"), rows.getString("FullName"),
 						rows.getString("Cus_Type"), rows.getString("Room_Code"), rows.getString("From_Date"), });
@@ -575,10 +593,9 @@ public class FrmRentalManager extends JFrame {
 		try {
 			String[] params = { txtMaKH_LC.getText() };
 			ResultSet rows = MySqlDB.executeQuery(initForm.nnp_getConnect(), Sql.selectContract(), params);
-			if (!rows.next()) {
+			if (rows.wasNull()) {
 				JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("M004"));
 			}
-			;
 			while (rows.next()) {
 				dataContract.addRow(new Object[] { rows.getString("Cus_Id"), rows.getString("FullName"),
 						rows.getString("Cus_Type"), rows.getString("Room_Code"), rows.getString("From_Date"), });

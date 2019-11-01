@@ -132,6 +132,10 @@ public class FrmLoginController extends JFrame {
 		if (rows.next()) {
             JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("S001"));
             Params.EMP_CODE = txtUsername.getText();
+            setVisible(false);
+            dispose();
+            FrmDashBoard frmDashBoard = new FrmDashBoard();
+            frmDashBoard.setVisible(true);
 		}
             else {
                 JOptionPane.showMessageDialog(this, initForm.nnp_showMessage("S002"));                       
