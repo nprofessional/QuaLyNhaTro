@@ -68,7 +68,7 @@ public class FrmRentalManager extends JFrame {
 	private JTextField txtSoLuong_S;
 	private JTable tblService;
 	private JComboBox cbxDichVu;
-	private List<String> contractNos = new ArrayList<String>();
+	public List<String> contractNos = new ArrayList<String>();
 	private String serviceCode;
 
 	/**
@@ -281,13 +281,15 @@ public class FrmRentalManager extends JFrame {
 		btnCheckout.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					Params.CONTRACT_CODE = "";
+					Params.ROOM_CODE = "";
+					Params.CONTRACT_CODE = contractNos.get(tblContract.getSelectedRow());
+					Params.ROOM_CODE = txtMaPhong_S.getText();
 					setVisible(false);
 					dispose();
 					FrmInvoice frmInvoice;
-					frmInvoice = new FrmInvoice();
+					frmInvoice = new FrmInvoice();					
 					frmInvoice.setVisible(true);
-					Params.CONTRACT_CODE = contractNos.get(tblContract.getSelectedRow());
-					Params.ROOM_CODE = txtMaPhong_S.getText();
 				} catch (ClassNotFoundException | SQLException | ParseException e1) {
 					e1.printStackTrace();
 				}

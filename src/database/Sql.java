@@ -325,20 +325,21 @@ public class Sql {
      */
     public static String selectAllContract() {
         String sql ="Select\r\n" + 
-                "  nnp_contract.Cus_Id\r\n" + 
-                "  , nnp_customer.FullName\r\n" + 
-                "  , nnp_contract.Cus_Type\r\n" + 
-                "  , nnp_contract.Room_Code\r\n" + 
-                "  , nnp_room.Name\r\n" + 
-                "  , nnp_contract.From_Date \r\n" + 
-                "  , nnp_contract.contract_no\r\n"+
-                "from\r\n" + 
-                "  nnp_contract \r\n" + 
-                "  left join nnp_customer \r\n" + 
-                "    on nnp_customer.Code = nnp_contract.Cus_Id \r\n" + 
-                "  left join nnp_room \r\n" + 
-                "    on nnp_room.Code = nnp_contract.Room_Code\r\n" + 
-                "";
+        		"  nnp_contract.Cus_Id\r\n" + 
+        		"  , nnp_customer.FullName\r\n" + 
+        		"  , nnp_contract.Cus_Type\r\n" + 
+        		"  , nnp_contract.Room_Code\r\n" + 
+        		"  , nnp_room.Name\r\n" + 
+        		"  , nnp_contract.From_Date\r\n" + 
+        		"  , nnp_contract.contract_no \r\n" + 
+        		"from\r\n" + 
+        		"  nnp_contract \r\n" + 
+        		"  left join nnp_customer \r\n" + 
+        		"    on nnp_customer.Code = nnp_contract.Cus_Id \r\n" + 
+        		"  left join nnp_room \r\n" + 
+        		"    on nnp_room.Code = nnp_contract.Room_Code \r\n" + 
+        		"WHERE\r\n" + 
+        		"  nnp_contract.to_date is null";
         return sql;
     }
     
@@ -362,7 +363,7 @@ public class Sql {
                 "  left join nnp_room \r\n" + 
                 "    on nnp_room.Code = nnp_contract.Room_Code \r\n" + 
                 "where\r\n" + 
-                "  nnp_contract.Room_Code = ?";
+                "  nnp_contract.Room_Code = ? AND nnp_contract.to_date is null";
         return sql;
     }
      
